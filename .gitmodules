@@ -1,0 +1,3 @@
+[submodule "app/src/main/cpp/raplayer"]
+	path = app/src/main/cpp/raplayer
+	url = https://github.com/hurrhnn/raplayer
