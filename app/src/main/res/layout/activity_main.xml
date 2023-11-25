@@ -12,11 +12,58 @@
         android:orientation="vertical">
 
         <TextView
+            android:layout_weight="0.3"
             android:id="@+id/main_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:gravity="top"
             android:text="Hello World!" />
+
+        <LinearLayout
+            android:layout_weight="10"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/logging_text"
+                android:background="@drawable/border_black">
+            </TextView>
+        </LinearLayout>
+
+        <EditText
+            android:layout_weight="1"
+            android:id="@+id/address_edittext"
+            android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:inputType="text"
+            android:hint="@string/address"
+            android:text=""/>
+
+        <EditText
+            android:layout_weight="1"
+            android:id="@+id/port_edittext"
+            android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:inputType="text"
+            android:hint="@string/port"
+            android:text=""/>
+
+        <Button
+            android:layout_weight="1"
+            android:id="@+id/main_start_button"
+            android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:text="달려!!!" />
+
+        <LinearLayout
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"/>
 
     </LinearLayout>
 
