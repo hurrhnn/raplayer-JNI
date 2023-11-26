@@ -44,10 +44,9 @@ void client_frame_callback(void *frame, int frame_size, void *user_args) {
 
 JNIEXPORT jboolean JNICALL Java_xyz_hurrhnn_raplayer_1jni_MainActivity_startClientFromJNI(
         JNIEnv *env,
-        jobject obj, jobject audio) {
+        jobject obj, jstring address, jint port, jobject audio) {
 
-    int *status = new int;
-    *status = -1;
+    void *status = std::malloc(sizeof(int));
 
     jni_callback jniCallbackCtx;
     (*env).GetJavaVM(&jniCallbackCtx.g_vm);
@@ -55,8 +54,7 @@ JNIEXPORT jboolean JNICALL Java_xyz_hurrhnn_raplayer_1jni_MainActivity_startClie
     jniCallbackCtx.mainActivityObj = (*env).NewGlobalRef(obj);
     jniCallbackCtx.audioTrackObj = (*env).NewGlobalRef(audio);
 
-    char address[0x32] = "192.168.35.202";
-    ra_client(address, 3845, client_frame_callback, &jniCallbackCtx, status);
+    ra_client((char *) env->GetStringUTFChars(address, nullptr), port, client_frame_callback, &jniCallbackCtx, (int *) status);
     return true;
 }
 }
