@@ -35,6 +35,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Title"
+                android:id="@+id/room_title"
                 android:layout_gravity="center" />
         </LinearLayout>
         <LinearLayout
@@ -53,6 +54,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="1"
+                android:id="@+id/limit_player"
                 android:layout_gravity="center" />
         </LinearLayout>
         <LinearLayout

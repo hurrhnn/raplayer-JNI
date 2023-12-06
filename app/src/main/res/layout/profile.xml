@@ -50,12 +50,17 @@
                 android:layout_height="wrap_content"
                 android:text="Profile image"
                 android:textSize="20dp" />
-            <EditText
+            <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Profile image"
+                android:text="Select Image"
                 android:layout_gravity="center"
-                android:id="@+id/user_image"/>
+                android:id="@+id/selectImageBtn"/>
+            <ImageView
+                android:id="@+id/profileImageView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"/>
         </LinearLayout>
         <LinearLayout
             android:layout_height="0dp"
@@ -63,7 +68,8 @@
             android:layout_width="match_parent"
             android:orientation="vertical"
             android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp">
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="50dp">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
