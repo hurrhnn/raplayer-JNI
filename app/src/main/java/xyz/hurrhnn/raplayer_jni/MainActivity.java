@@ -53,21 +53,61 @@ public class MainActivity extends AppCompatActivity {
         LinearLayout linearLayout = binding.lroot;
 
 
-        LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, 0,1);
-        params1.bottomMargin=5;
-
-        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, 0, 1);
-        params2.leftMargin=10;
-
-        LinearLayout.LayoutParams params3 = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT, 0, 1);
-        params3.gravity= Gravity.RIGHT;
-        params3.rightMargin=10;
-
         RequestThread pushprofile = new RequestThread(getApplicationContext(), "GET", "profile", "");
         pushprofile.start();
+
+        class getroomThread extends Thread{
+            private JSONArray roomlist;
+
+            public void setValue(JSONArray roomlist){
+                this.roomlist = roomlist;
+            }
+
+            @Override
+            public void run() {
+                super.run();
+
+                class asdfRunnable implements Runnable{
+
+                    int cnt;
+                    @Override
+                    public void run() {
+                        RequestThread getRoom = new RequestThread(getApplicationContext(), "GET", "", "");
+                        getRoom.start();
+                        try {
+                            getRoom.join();
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+
+                        if(getRoom.getResult() != null) {
+                            JSONObject jsonObject = getRoom.getResult();
+                            try {
+                                JSONArray troomlist = (JSONArray) jsonObject.get("data");
+                                if(troomlist.length() != cnt){
+                                    cnt = troomlist.length();
+                                    linearLayout.removeAllViews();
+                                    createlayout(linearLayout, troomlist);
+                                }
+                            } catch (JSONException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                    }
+                }
+                asdfRunnable asdf = new asdfRunnable();
+                asdf.cnt = roomlist.length();
+                while(true){
+                    System.out.println("asdf");
+                    runOnUiThread(asdf);
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
 
         RequestThread getRoom = new RequestThread(getApplicationContext(), "GET", "", "");
         getRoom.start();
@@ -82,27 +122,152 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        JSONObject jsonObject = getRoom.getResult();
         try {
-            JSONArray jsonArray = (JSONArray) jsonObject.get("data");
+            JSONArray jsonArray = (JSONArray) getRoom.getResult().get("data");
+            createlayout(linearLayout, jsonArray);
+            getroomThread getroomthread = new getroomThread();
+            getroomthread.setValue(jsonArray);
+            getroomthread.start();
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+
+
+//        RequestThread getRoom = new RequestThread(getApplicationContext(), "GET", "", "");
+//        getRoom.start();
+//        try {
+//            getRoom.join();
+//        } catch (InterruptedException e) {
+//            throw new RuntimeException(e);
+//        }
+//
+//        if(getRoom.getResult() == null) {
+//            postToastMessage("서버와 연결할 수 없습니다.");
+//            return;
+//        }
+//
+//        JSONObject jsonObject = getRoom.getResult();
+//        try {
+//            JSONArray jsonArray = (JSONArray) jsonObject.get("data");
+//            for(int i=0;i<jsonArray.length();i++){
+//
+//                JSONObject roomObj = (JSONObject)jsonArray.get(i);
+//                String title = roomObj.get("title").toString();
+//
+//                LinearLayout room_root = new LinearLayout(this);
+//                room_root.setLayoutParams(params1);
+//                room_root.setOrientation(LinearLayout.VERTICAL);
+//                room_root.setBackgroundColor(Color.GRAY);
+//
+//                TextView titleText = new TextView(this);
+//                titleText.setLayoutParams(params2);
+//                titleText.setTextSize(20);
+//                titleText.setText(title + " - " + roomObj.get("userid").toString());
+//
+//                TextView playText = new TextView(this);
+//                playText.setText(roomObj.get("cnt").toString()+"/"+roomObj.get("limit").toString());
+//                playText.setLayoutParams(params3);
+//                playText.setTextSize(20);
+//
+//                room_root.addView(titleText);
+//                room_root.addView(playText);
+//                linearLayout.addView(room_root);
+//
+//                room_root.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        Bundle bundle = new Bundle();
+//                        bundle.putString("title",title);
+//                        try {
+//                            bundle.putString("userid",roomObj.get("userid").toString());
+//                        } catch (JSONException e) {
+//                            throw new RuntimeException(e);
+//                        }
+//
+//                        PopupFragment popup_fragment = new PopupFragment();
+//                        popup_fragment.setArguments(bundle);
+//                        getSupportFragmentManager().beginTransaction().replace(R.id.root, popup_fragment).addToBackStack(null).commit();
+//                    }
+//                });
+//
+//            }
+//        } catch (JSONException e) {
+//            throw new RuntimeException(e);
+//        }
+    }
+
+    //create menu
+    @Override
+    public boolean onCreateOptionsMenu(android.view.Menu menu) {
+        menu.add(0, 1, 0, "Create Room");
+        menu.add(0, 2, 0, "Stats");
+        menu.add(0, 3, 0, "Profile");
+        menu.add(0, 4, 0, "refresh");
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    public void postToastMessage(final String message) {
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    @SuppressLint("SetTextI18n")
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public void createlayout(LinearLayout linearLayout, JSONArray jsonArray){
+        LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, 0,1);
+        params1.bottomMargin=5;
+
+        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, 0, 1);
+        params2.leftMargin=10;
+
+        LinearLayout.LayoutParams params3 = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT, 0, 1);
+        params3.gravity= Gravity.RIGHT;
+        params3.rightMargin=10;
+
+//        RequestThread getRoom = new RequestThread(getApplicationContext(), "GET", "", "");
+//        getRoom.start();
+//        try {
+//            getRoom.join();
+//        } catch (InterruptedException e) {
+//            throw new RuntimeException(e);
+//        }
+//
+//        if(getRoom.getResult() == null) {
+//            postToastMessage("서버와 연결할 수 없습니다.");
+//            return;
+//        }
+//
+//        JSONObject jsonObject = getRoom.getResult();
+        try {
+//            JSONArray jsonArray = (JSONArray) jsonObject.get("data");
             for(int i=0;i<jsonArray.length();i++){
 
                 JSONObject roomObj = (JSONObject)jsonArray.get(i);
                 String title = roomObj.get("title").toString();
 
-                LinearLayout room_root = new LinearLayout(this);
+                LinearLayout room_root = new LinearLayout(getApplicationContext());
                 room_root.setLayoutParams(params1);
                 room_root.setOrientation(LinearLayout.VERTICAL);
                 room_root.setBackgroundColor(Color.GRAY);
 
-                TextView titleText = new TextView(this);
+                TextView titleText = new TextView(getApplicationContext());
                 titleText.setLayoutParams(params2);
                 titleText.setTextSize(20);
+                titleText.setTextColor(Color.BLACK);
                 titleText.setText(title + " - " + roomObj.get("userid").toString());
 
-                TextView playText = new TextView(this);
+                TextView playText = new TextView(getApplicationContext());
                 playText.setText(roomObj.get("cnt").toString()+"/"+roomObj.get("limit").toString());
                 playText.setLayoutParams(params3);
+                playText.setTextColor(Color.BLACK);
                 playText.setTextSize(20);
 
                 room_root.addView(titleText);
@@ -125,116 +290,10 @@ public class MainActivity extends AppCompatActivity {
                         getSupportFragmentManager().beginTransaction().replace(R.id.root, popup_fragment).addToBackStack(null).commit();
                     }
                 });
-
             }
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
-
-
-//        for(int i = 0; i < 50; i++) {
-//            String title = Integer.toString((int)(Math.random() * 899999) + 100000);
-//            LinearLayout room_root = new LinearLayout(this);
-//            room_root.setLayoutParams(params1);
-//            room_root.setOrientation(LinearLayout.VERTICAL);
-//            room_root.setBackgroundColor(Color.GRAY);
-//
-//
-//            TextView titleText = new TextView(this);
-//            titleText.setLayoutParams(params2);
-//            titleText.setTextSize(20);
-//            titleText.setText(title);
-//
-//
-//            TextView playText = new TextView(this);
-//            playText.setText("1/8");
-//            playText.setLayoutParams(params3);
-//            playText.setTextSize(20);
-//
-//            room_root.addView(titleText);
-//            room_root.addView(playText);
-//            linearLayout.addView(room_root);
-//
-//            room_root.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    Bundle bundle = new Bundle();
-//                    bundle.putString("title",title);
-//
-//                    PopupFragment popup_fragment = new PopupFragment();
-//                    popup_fragment.setArguments(bundle);
-//                    getSupportFragmentManager().beginTransaction().replace(R.id.root, popup_fragment).addToBackStack(null).commit();
-//                }
-//            });
-//        }
-
-
-
-
-
-//        TextView textView = findViewById(R.id.main_text);
-//        TextView logView = findViewById(R.id.logging_text);
-//        logView.setTextColor(Color.WHITE);
-//
-//        EditText addressEditText = findViewById(R.id.address_edittext);
-//        EditText portEditText = findViewById(R.id.port_edittext);
-//        Button startButton = findViewById(R.id.main_start_button);
-//
-//        textView.setText(stringFromJNI());
-//        startButton.setOnClickListener(new View.OnClickListener() {
-//            int count = 0;
-//
-//            @Override
-//            public void onClick(View v) {
-//                AudioTrack audio = new AudioTrack(AudioManager.STREAM_MUSIC, 48000, //sample rate
-//                    AudioFormat.CHANNEL_OUT_STEREO, // 2 channel
-//                    AudioFormat.ENCODING_PCM_16BIT, // 16-bit
-//                    960 * 2 * 2, AudioTrack.MODE_STREAM);
-//
-//                audio.play();
-//
-//                String address = addressEditText.getText().toString();
-//                String port = portEditText.getText().toString();
-//
-//                String text = logView.getText().toString() + " [" + new Formatter().format("%02d", ++count).toString() + "] Connecting to " + address + ":" + port + "...\n";
-//                logView.setText(text);
-//
-//                class ClientThread extends Thread {
-//                    private final String address;
-//                    private final int port;
-//
-//                    public ClientThread(String address, int port) {
-//                        this.address = address;
-//                        this.port = port;
-//                    }
-//
-//                    public void run() {
-//                        startClientFromJNI(address, port, audio);
-//                    }
-//                }
-//                ClientThread clientThread = new ClientThread(address, Integer.parseInt(port));
-//                clientThread.start();
-//            }
-//        });
-    }
-
-    //create menu
-    @Override
-    public boolean onCreateOptionsMenu(android.view.Menu menu) {
-        menu.add(0, 1, 0, "Create Room");
-        menu.add(0, 2, 0, "Stats");
-        menu.add(0, 3, 0, "Profile");
-        menu.add(0, 4, 0, "refresh");
-        return super.onCreateOptionsMenu(menu);
-    }
-    public void postToastMessage(final String message) {
-        Handler handler = new Handler(Looper.getMainLooper());
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
-            }
-        });
     }
 
 

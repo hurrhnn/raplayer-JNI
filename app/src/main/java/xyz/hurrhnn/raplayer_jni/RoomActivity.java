@@ -48,6 +48,7 @@ public class RoomActivity extends AppCompatActivity {
         TextView title = roombinding.roomTitle;
         title.setText(String.format(title.getText().toString(), message));
         LinearLayout inroomRoot = roombinding.inroomRoot;
+        boolean endflag = false;
 
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
@@ -69,14 +70,18 @@ public class RoomActivity extends AppCompatActivity {
                     getinroom_user.start();
                     getinroom_user.join();
 
-
-                    JSONObject jsonObject = getinroom_user.getResult().getJSONObject("data");
-                    String username = jsonObject.getString("username");
-                    String idk1 = jsonObject.getString("introduction");
-                    String img = jsonObject.getString("img");
-                    createlaylout(username, idk1, img, inroomRoot);
+                    if(getinroom_user.getResult() == null){
+                        Toast.makeText(getApplicationContext(), "알수없는 오류 발생", Toast.LENGTH_SHORT).show();
+                        endflag = true;
+                        break;
+                    } else {
+                        JSONObject jsonObject = getinroom_user.getResult().getJSONObject("data");
+                        String username = jsonObject.getString("username");
+                        String idk1 = jsonObject.getString("introduction");
+                        String img = jsonObject.getString("img");
+                        createlaylout(username, idk1, img, inroomRoot);
+                    }
                 }
-
                 myThread.setValue(server_userid, inroom_user, inroomRoot, true);
                 myThread.start();
             } catch (InterruptedException e) {
@@ -119,6 +124,10 @@ public class RoomActivity extends AppCompatActivity {
             inroom_root.put(userid);
             myThread.setValue(userid, inroom_root, inroomRoot, true);
             myThread.start();
+        }
+        if(endflag){
+            myThread.setValue("", new JSONArray(), null, false);
+            finish();
         }
     }
     @RequiresApi(api = Build.VERSION_CODES.N)
