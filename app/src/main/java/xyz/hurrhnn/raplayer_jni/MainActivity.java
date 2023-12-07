@@ -131,69 +131,6 @@ public class MainActivity extends AppCompatActivity {
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
-
-
-//        RequestThread getRoom = new RequestThread(getApplicationContext(), "GET", "", "");
-//        getRoom.start();
-//        try {
-//            getRoom.join();
-//        } catch (InterruptedException e) {
-//            throw new RuntimeException(e);
-//        }
-//
-//        if(getRoom.getResult() == null) {
-//            postToastMessage("서버와 연결할 수 없습니다.");
-//            return;
-//        }
-//
-//        JSONObject jsonObject = getRoom.getResult();
-//        try {
-//            JSONArray jsonArray = (JSONArray) jsonObject.get("data");
-//            for(int i=0;i<jsonArray.length();i++){
-//
-//                JSONObject roomObj = (JSONObject)jsonArray.get(i);
-//                String title = roomObj.get("title").toString();
-//
-//                LinearLayout room_root = new LinearLayout(this);
-//                room_root.setLayoutParams(params1);
-//                room_root.setOrientation(LinearLayout.VERTICAL);
-//                room_root.setBackgroundColor(Color.GRAY);
-//
-//                TextView titleText = new TextView(this);
-//                titleText.setLayoutParams(params2);
-//                titleText.setTextSize(20);
-//                titleText.setText(title + " - " + roomObj.get("userid").toString());
-//
-//                TextView playText = new TextView(this);
-//                playText.setText(roomObj.get("cnt").toString()+"/"+roomObj.get("limit").toString());
-//                playText.setLayoutParams(params3);
-//                playText.setTextSize(20);
-//
-//                room_root.addView(titleText);
-//                room_root.addView(playText);
-//                linearLayout.addView(room_root);
-//
-//                room_root.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        Bundle bundle = new Bundle();
-//                        bundle.putString("title",title);
-//                        try {
-//                            bundle.putString("userid",roomObj.get("userid").toString());
-//                        } catch (JSONException e) {
-//                            throw new RuntimeException(e);
-//                        }
-//
-//                        PopupFragment popup_fragment = new PopupFragment();
-//                        popup_fragment.setArguments(bundle);
-//                        getSupportFragmentManager().beginTransaction().replace(R.id.root, popup_fragment).addToBackStack(null).commit();
-//                    }
-//                });
-//
-//            }
-//        } catch (JSONException e) {
-//            throw new RuntimeException(e);
-//        }
     }
 
     //create menu
@@ -232,22 +169,7 @@ public class MainActivity extends AppCompatActivity {
         params3.gravity= Gravity.RIGHT;
         params3.rightMargin=10;
 
-//        RequestThread getRoom = new RequestThread(getApplicationContext(), "GET", "", "");
-//        getRoom.start();
-//        try {
-//            getRoom.join();
-//        } catch (InterruptedException e) {
-//            throw new RuntimeException(e);
-//        }
-//
-//        if(getRoom.getResult() == null) {
-//            postToastMessage("서버와 연결할 수 없습니다.");
-//            return;
-//        }
-//
-//        JSONObject jsonObject = getRoom.getResult();
         try {
-//            JSONArray jsonArray = (JSONArray) jsonObject.get("data");
             for(int i=0;i<jsonArray.length();i++){
 
                 JSONObject roomObj = (JSONObject)jsonArray.get(i);
@@ -295,7 +217,6 @@ public class MainActivity extends AppCompatActivity {
             throw new RuntimeException(e);
         }
     }
-
 
 
     //menu event
