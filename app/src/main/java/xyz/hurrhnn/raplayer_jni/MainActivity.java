@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
 
                 class asdfRunnable implements Runnable{
 
-                    int cnt;
+                    JSONArray inroom;
                     @Override
                     public void run() {
                         RequestThread getRoom = new RequestThread(getApplicationContext(), "GET", "", "");
@@ -84,10 +84,21 @@ public class MainActivity extends AppCompatActivity {
                             JSONObject jsonObject = getRoom.getResult();
                             try {
                                 JSONArray troomlist = (JSONArray) jsonObject.get("data");
-                                if(troomlist.length() != cnt){
-                                    cnt = troomlist.length();
+                                if(troomlist.length() != inroom.length()){
+                                    inroom = troomlist;
                                     linearLayout.removeAllViews();
                                     createlayout(linearLayout, troomlist);
+                                } else {
+                                    for(int i=0;i<troomlist.length();i++){
+                                        JSONObject roomObj = (JSONObject)troomlist.get(i);
+                                        JSONObject inroomObj = (JSONObject)inroom.get(i);
+                                        if(!roomObj.get("cnt").toString().equals(inroomObj.get("cnt").toString())){
+                                            inroom = troomlist;
+                                            linearLayout.removeAllViews();
+                                            createlayout(linearLayout, troomlist);
+                                            break;
+                                        }
+                                    }
                                 }
                             } catch (JSONException e) {
                                 throw new RuntimeException(e);
@@ -96,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
                 asdfRunnable asdf = new asdfRunnable();
-                asdf.cnt = roomlist.length();
+                asdf.inroom = roomlist;
                 while(true){
                     runOnUiThread(asdf);
                     try {
