@@ -32,6 +32,7 @@ public class RequestThread extends Thread{
             try {
                 Connection.Response res = httpRequestUtils.GET(context, "https://ursobad.xyz/raplayer/"+URL, new HashMap<>(), (String[]) null);
                 if(res.statusCode() == 200){
+//                    System.out.println(res.body());
                     result = new JSONObject(res.body());
                 } else {
                     JSONObject msg = new JSONObject(res.body());

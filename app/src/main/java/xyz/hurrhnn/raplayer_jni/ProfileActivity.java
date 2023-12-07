@@ -23,6 +23,9 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -50,30 +53,13 @@ public class ProfileActivity extends AppCompatActivity {
                 profilebinding.username.setText(res.getString(1));
                 profilebinding.password.setText(res.getString(2));
                 profilebinding.introduction.setText(res.getString(3));
-                class DownloadImageTask extends Thread {
-                    ImageView bmImage;
-                    String url;
-                    public DownloadImageTask(ImageView bmImage, String url) {
-                        this.bmImage = bmImage;
-                        this.url = url;
-                    }
-                    protected Bitmap doInBackground(Void... urls) {
-                        String urldisplay = url;
-                        Bitmap user_image = null;
-                        try {
-                            java.net.URL url = new java.net.URL(urldisplay);
-                            user_image = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        return user_image;
-                    }
-                    protected void onPostExecute(Bitmap result) {
-                        bmImage.setImageBitmap(result);
-                    }
-                }
-                DownloadImageTask downloadImageTask = new DownloadImageTask(profilebinding.profileImageView, res.getString(4));
-                downloadImageTask.start();
+                System.out.println(res.getString(4));
+                Glide.with(getApplicationContext())
+                        .load(res.getString(4))
+                        .centerCrop()
+                        .skipMemoryCache(true)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .into((ImageView) findViewById(R.id.profileImageView));
             }
         }
 
@@ -134,13 +120,7 @@ public class ProfileActivity extends AppCompatActivity {
                         Intent data = result.getData();
                         if (data != null) {
                             Uri uri = data.getData();
-                            try {
-                                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
-                                ImageView imageView = findViewById(R.id.profileImageView);
-                                imageView.setImageBitmap(bitmap);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+                            Glide.with(getApplicationContext()).load(uri).into((ImageView) findViewById(R.id.profileImageView));
                         }
                     }
                 }

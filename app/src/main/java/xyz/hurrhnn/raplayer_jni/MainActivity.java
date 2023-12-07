@@ -98,7 +98,6 @@ public class MainActivity extends AppCompatActivity {
                 asdfRunnable asdf = new asdfRunnable();
                 asdf.cnt = roomlist.length();
                 while(true){
-                    System.out.println("asdf");
                     runOnUiThread(asdf);
                     try {
                         Thread.sleep(1000);
