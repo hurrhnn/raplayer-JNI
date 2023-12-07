@@ -61,7 +61,7 @@ public class RequestThread extends Thread{
         handler.post(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
             }
         });
     }

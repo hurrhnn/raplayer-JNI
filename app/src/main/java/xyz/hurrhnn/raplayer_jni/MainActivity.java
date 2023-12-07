@@ -68,14 +68,6 @@ public class MainActivity extends AppCompatActivity {
 
         RequestThread pushprofile = new RequestThread(getApplicationContext(), "GET", "profile", "");
         pushprofile.start();
-        try {
-            pushprofile.join();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        JSONObject profile = pushprofile.getResult();
-        System.out.println(profile.toString());
-
 
         RequestThread getRoom = new RequestThread(getApplicationContext(), "GET", "", "");
         getRoom.start();
@@ -85,6 +77,10 @@ public class MainActivity extends AppCompatActivity {
             throw new RuntimeException(e);
         }
 
+        if(getRoom.getResult() == null) {
+            postToastMessage("서버와 연결할 수 없습니다.");
+            return;
+        }
 
         JSONObject jsonObject = getRoom.getResult();
         try {

@@ -1,5 +1,6 @@
 package xyz.hurrhnn.raplayer_jni;
 
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Build;
@@ -10,8 +11,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import org.json.JSONArray;
@@ -28,6 +31,9 @@ public class RoomActivity extends AppCompatActivity {
         System.loadLibrary("raplayer_jni");
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    myThread myThread = new myThread();
+
     @Override
     @RequiresApi(api = Build.VERSION_CODES.N)
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -42,6 +48,14 @@ public class RoomActivity extends AppCompatActivity {
         TextView title = roombinding.roomTitle;
         title.setText(String.format(title.getText().toString(), message));
         LinearLayout inroomRoot = roombinding.inroomRoot;
+
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                showExitDialog();
+            }
+        };
+        getOnBackPressedDispatcher().addCallback(this, callback);
 
 
         if(Objects.equals(event, "join")) {
@@ -62,7 +76,9 @@ public class RoomActivity extends AppCompatActivity {
                     String img = jsonObject.getString("img");
                     createlaylout(username, idk1, img, inroomRoot);
                 }
-                runThread(server_userid, inroom_user, inroomRoot);
+
+                myThread.setValue(server_userid, inroom_user, inroomRoot, true);
+                myThread.start();
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             } catch (JSONException e) {
@@ -98,65 +114,76 @@ public class RoomActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
-                JSONArray inroom_root = new JSONArray();
-                inroom_root.put(userid);
-                runThread(userid, inroom_root, inroomRoot);
             }
+            JSONArray inroom_root = new JSONArray();
+            inroom_root.put(userid);
+            myThread.setValue(userid, inroom_root, inroomRoot, true);
+            myThread.start();
         }
     }
     @RequiresApi(api = Build.VERSION_CODES.N)
-    private void runThread(String server_userid, final JSONArray inroom_user, LinearLayout inroomRoot) {
-        new Thread() {
-            public void run() {
-                class asdfRunnable implements Runnable{
-                    int cnt = inroom_user.length();
-                    @Override
-                    public void run() {
-                        JSONArray tinroom_user = new JSONArray();
-                        RequestThread getinRoomuser = new RequestThread(getApplicationContext(), "GET", "room/"+server_userid, "");
-                        getinRoomuser.start();
-                        try {
-                            getinRoomuser.join();
-                            JSONObject jsonObject = getinRoomuser.getResult();
-                            if (jsonObject != null) {
-                                tinroom_user = jsonObject.getJSONArray("inuser");
-                                if (tinroom_user.length() != cnt) {
-                                    cnt = tinroom_user.length();
-                                    for (int i = 0; i < tinroom_user.length(); i++) {
-                                        RequestThread getinroom_user = new RequestThread(getApplicationContext(), "GET", "user/" + tinroom_user.get(i), "");
-                                        getinroom_user.start();
-                                        getinroom_user.join();
+    class myThread extends Thread{
+        private JSONArray inroom_user;
+        private String server_userid;
+        private LinearLayout inroomRoot;
+        private boolean condition = true;
 
-                                        if(getinroom_user.getResult() != null){
-                                            if(i==0) inroomRoot.removeAllViews();
-                                            JSONObject jsonObject1 = getinroom_user.getResult().getJSONObject("data");
-                                            String username = jsonObject1.getString("username");
-                                            String idk1 = jsonObject1.getString("introduction");
-                                            String img = jsonObject1.getString("img");
-                                            createlaylout(username, idk1, img, inroomRoot);
-                                        }
+        public void setValue(String server_userid, JSONArray inroom_user, LinearLayout inroomRoot, boolean condition){
+            this.server_userid = server_userid;
+            this.inroom_user = inroom_user;
+            this.inroomRoot = inroomRoot;
+            this.condition = condition;
+        }
+
+        public void run() {
+            class asdfRunnable implements Runnable{
+                int cnt = inroom_user.length();
+                @Override
+                public void run() {
+                    JSONArray tinroom_user = new JSONArray();
+                    RequestThread getinRoomuser = new RequestThread(getApplicationContext(), "GET", "room/"+server_userid, "");
+                    getinRoomuser.start();
+                    try {
+                        getinRoomuser.join();
+                        JSONObject jsonObject = getinRoomuser.getResult();
+                        if (jsonObject != null) {
+                            tinroom_user = jsonObject.getJSONArray("inuser");
+                            if (tinroom_user.length() != cnt) {
+                                cnt = tinroom_user.length();
+                                for (int i = 0; i < tinroom_user.length(); i++) {
+                                    RequestThread getinroom_user = new RequestThread(getApplicationContext(), "GET", "user/" + tinroom_user.get(i), "");
+                                    getinroom_user.start();
+                                    getinroom_user.join();
+
+                                    if(getinroom_user.getResult() != null){
+                                        if(i==0) inroomRoot.removeAllViews();
+                                        JSONObject jsonObject1 = getinroom_user.getResult().getJSONObject("data");
+                                        String username = jsonObject1.getString("username");
+                                        String idk1 = jsonObject1.getString("introduction");
+                                        String img = jsonObject1.getString("img");
+                                        createlaylout(username, idk1, img, inroomRoot);
                                     }
                                 }
                             }
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        } catch (JSONException e) {
-                            throw new RuntimeException(e);
                         }
-                    }
-                }
-                asdfRunnable asdfRunnable = new asdfRunnable();
-                asdfRunnable.cnt = inroom_user.length();
-                while (true) {
-                    try {
-                        runOnUiThread(asdfRunnable);
-                        Thread.sleep(1000);
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        throw new RuntimeException(e);
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
                     }
                 }
             }
-        }.start();
+            asdfRunnable asdfRunnable = new asdfRunnable();
+            asdfRunnable.cnt = inroom_user.length();
+            while (condition) {
+                try {
+                    runOnUiThread(asdfRunnable);
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     public void createlaylout(String username, String idk1, String img, LinearLayout inroomRoot){
@@ -202,22 +229,27 @@ public class RoomActivity extends AppCompatActivity {
         linearroom.addView(imageView);
         linearroom.addView(linearprofile);
         inroomRoot.addView(linearroom);
-//        int layoutcount = inroomRoot.getChildCount();
     }
 
-    @Override
     @RequiresApi(api = Build.VERSION_CODES.N)
-    protected void onPause() {
-        super.onPause();
-        if (isFinishing()) {
-            // 액티비티가 완전히 종료된 경우
-            // 여기에 처리할 내용을 추가하세요.
-            RequestThread requestThread = new RequestThread(getApplicationContext(), "POST", "delete", "");
-            requestThread.start();
-        } else {
-            // 다른 액티비티로 전환된 경우
-            // 여기에 처리할 내용을 추가하세요.
-            Toast.makeText(this, "다른 액티비티로 전환되었습니다.", Toast.LENGTH_SHORT).show();
-        }
+    private void showExitDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("방을 나가시겠습니까? 방장이 방을 나갈시 방이 삭제됩니다.")
+                .setPositiveButton("예", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        RequestThread requestThread = new RequestThread(getApplicationContext(), "POST", "delete", "");
+                        requestThread.start();
+                        myThread.setValue("", null, null, false);
+                        finish();
+                    }
+                })
+                .setNegativeButton("아니오", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 }
