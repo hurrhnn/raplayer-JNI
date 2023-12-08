@@ -10,8 +10,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.view.Gravity;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +32,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -42,6 +48,8 @@ public class RoomActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.N)
     myThread myThread = new myThread();
 
+
+
     @Override
     @RequiresApi(api = Build.VERSION_CODES.N)
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -52,6 +60,7 @@ public class RoomActivity extends AppCompatActivity {
         String message = this.getIntent().getStringExtra("title");
         String event = this.getIntent().getStringExtra("event");
         String server_userid = this.getIntent().getStringExtra("server_userid");
+        String user_id = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
 
         TextView title = roombinding.roomTitle;
         title.setText(String.format(title.getText().toString(), message));
@@ -87,7 +96,7 @@ public class RoomActivity extends AppCompatActivity {
                         String username = jsonObject.getString("username");
                         String idk1 = jsonObject.getString("introduction");
                         String img = jsonObject.getString("img");
-                        createlaylout(username, idk1, img, inroomRoot);
+                        createlaylout(username, idk1, img, inroomRoot,jsonObject.getString("userid"));
 
                 }
                 myThread.setValue(server_userid, inroom_user, inroomRoot, true);
@@ -108,10 +117,12 @@ public class RoomActivity extends AppCompatActivity {
                             res.getString(1),
                             res.getString(3),
                             res.getString(4),
-                            inroomRoot
+                            inroomRoot,
+                            user_id
                     );
                 }
             } else {
+                System.out.println("nononnonononono data base in data");
                 RequestThread getprofile = new RequestThread(getApplicationContext(), "GET", "profile", "");
                 getprofile.start();
                 try {
@@ -121,7 +132,8 @@ public class RoomActivity extends AppCompatActivity {
                             jsonObject.getString("username"),
                             jsonObject.getString("introduction"),
                             jsonObject.getString("img"),
-                            inroomRoot
+                            inroomRoot,
+                            user_id
                     );
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
@@ -174,6 +186,7 @@ public class RoomActivity extends AppCompatActivity {
                                     RequestThread getinroom_user = new RequestThread(getApplicationContext(), "GET", "user/" + tinroom_user.get(i), "");
                                     getinroom_user.start();
                                     getinroom_user.join();
+                                    System.out.println(getinroom_user.toString());
 
                                     if(getinroom_user.getResult() != null){
                                         if(i==0) inroomRoot.removeAllViews();
@@ -181,8 +194,7 @@ public class RoomActivity extends AppCompatActivity {
                                         String username = jsonObject1.getString("username");
                                         String idk1 = jsonObject1.getString("introduction");
                                         String img = jsonObject1.getString("img");
-                                        System.out.println(username+" "+img);
-                                        createlaylout(username, idk1, img, inroomRoot);
+                                        createlaylout(username, idk1, img, inroomRoot, jsonObject1.getString("userid"));
                                     }
                                 }
                             }
@@ -208,7 +220,7 @@ public class RoomActivity extends AppCompatActivity {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public void createlaylout(String username, String idk1, String img, LinearLayout inroomRoot){
+    public void createlaylout(String username, String idk1, String img, LinearLayout inroomRoot, String id){
         LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, 0,1);
         params1.bottomMargin=5;
@@ -219,7 +231,7 @@ public class RoomActivity extends AppCompatActivity {
 
         LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(
                 316, 316);
-        params2.setMargins(5,10,5,10);
+        params2.setMargins(10,10,10,10);
         ImageView imageView = new ImageView(this);
         imageView.setImageResource(R.drawable.ic_launcher_foreground);
         imageView.setLayoutParams(params2);
@@ -246,41 +258,46 @@ public class RoomActivity extends AppCompatActivity {
         params3.setMargins(20,0,0,0);
         idk.setLayoutParams(params3);
 
+        View view = new View(this);
+        LinearLayout.LayoutParams viewp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, 2);
+        viewp.setMargins(0,0,5,0);
+        view.setLayoutParams(viewp);
+        view.setBackgroundColor(Color.BLACK);
+
+        LinearLayout microot = new LinearLayout(this);
+        microot.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        microot.setGravity(Gravity.CENTER);
+
+        Switch micsw = new Switch(this);
+        params3.setMargins(10,10,0,0);
+        micsw.setLayoutParams(params3);
+        if(!id.equals(Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID))){
+            micsw.setClickable(false);
+        }
+
+
+        TextView mic = new TextView(this);
+        mic.setTextColor(Color.parseColor("#FFFFFF"));
+        mic.setText("MIC");
+        mic.setTextSize(20);
+        mic.setLayoutParams(params3);
+
         if(!Objects.equals(img, "")) {
             Glide.with(this).load(img)
                     .centerCrop()
                     .skipMemoryCache(true)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .into(imageView);
-//            System.out.println(uri);
-//            try {
-//                Bitmap bitmap = null;
-//                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
-//                    bitmap = ImageDecoder.decodeBitmap(ImageDecoder.createSource(getContentResolver(), uri));
-//                } else {
-//                    bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
-//                }
-//                imageView.setImageBitmap(bitmap);
-//            } catch (IOException e) {
-//                throw new RuntimeException(e);
-//            }
-//            RequestThread getprofileimg = new RequestThread(getApplicationContext(), "GET", img.split("/raplayer/")[1], "");
-//            getprofileimg.start();
-//            try {
-//                getprofileimg.join();
-//                if (getprofileimg.getResult() != null) {
-////                    imageView.setImageBitmap(getprofileimg.getResult());
-//                    System.out.println(getprofileimg.result);
-//                }
-//            } catch (InterruptedException e) {
-//                throw new RuntimeException(e);
-//            }
         } else {
             imageView.setImageResource(R.drawable.ic_launcher_foreground);
         }
 
         linearprofile.addView(usernameTx);
         linearprofile.addView(idk);
+        linearprofile.addView(view);
+        microot.addView(mic);
+        microot.addView(micsw);
+        linearprofile.addView(microot);
         linearroom.addView(imageView);
         linearroom.addView(linearprofile);
         inroomRoot.addView(linearroom);
