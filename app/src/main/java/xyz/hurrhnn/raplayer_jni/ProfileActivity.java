@@ -47,7 +47,7 @@ public class ProfileActivity extends AppCompatActivity {
         DatabaseHelper userDB = new DatabaseHelper(this);
         String userid = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
 
-        Cursor res = userDB.getData(userid);
+        Cursor res = userDB.usergetData(userid);
         if (res.getCount() != 0) {
             while(res.moveToNext()){
                 profilebinding.username.setText(res.getString(1));
@@ -88,9 +88,9 @@ public class ProfileActivity extends AppCompatActivity {
                     RequestThread requestThread = new RequestThread(getApplicationContext(), "POST", "profile", jsonObject.toString());
                     requestThread.start();
                     if (res.getCount() == 0) {
-                        userDB.insertData(userid, username, password,introduction, "https://ursobad.xyz/raplayer/image/"+userid);
+                        userDB.userinsertData(userid, username, password,introduction, "https://ursobad.xyz/raplayer/image/"+userid);
                     } else{
-                        userDB.updateData(userid, username, password, introduction, "https://ursobad.xyz/raplayer/image/"+userid);
+                        userDB.userupdateData(userid, username, password, introduction, "https://ursobad.xyz/raplayer/image/"+userid);
                     }
                     finish();
 

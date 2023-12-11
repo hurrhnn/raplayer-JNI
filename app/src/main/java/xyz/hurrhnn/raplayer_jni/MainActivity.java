@@ -109,8 +109,8 @@ public class MainActivity extends AppCompatActivity {
                 asdfRunnable asdf = new asdfRunnable();
                 asdf.inroom = roomlist;
                 while(true){
-                    runOnUiThread(asdf);
                     try {
+                        runOnUiThread(asdf);
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();

@@ -35,6 +35,9 @@ import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Objects;
 
 import xyz.hurrhnn.raplayer_jni.databinding.RoomBinding;
@@ -57,6 +60,9 @@ public class RoomActivity extends AppCompatActivity {
         RoomBinding roombinding = RoomBinding.inflate(getLayoutInflater());
         setContentView(roombinding.getRoot());
 
+        DatabaseHelper userDB = new DatabaseHelper(this);
+//        userDB.onUpgrade(userDB.getWritableDatabase(),1,2);
+
         String message = this.getIntent().getStringExtra("title");
         String event = this.getIntent().getStringExtra("event");
         String server_userid = this.getIntent().getStringExtra("server_userid");
@@ -66,14 +72,6 @@ public class RoomActivity extends AppCompatActivity {
         title.setText(String.format(title.getText().toString(), message));
         LinearLayout inroomRoot = roombinding.inroomRoot;
         boolean endflag = false;
-
-        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                showExitDialog();
-            }
-        };
-        getOnBackPressedDispatcher().addCallback(this, callback);
 
 
         if(Objects.equals(event, "join")) {
@@ -107,10 +105,9 @@ public class RoomActivity extends AppCompatActivity {
                 throw new RuntimeException(e);
             }
         } else {
-            DatabaseHelper userDB = new DatabaseHelper(this);
             System.out.println("in data base in data");
             String userid = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-            Cursor res = userDB.getData(userid);
+            Cursor res = userDB.usergetData(userid);
             if (res.getCount() != 0) {
                 while (res.moveToNext()) {
                     createlaylout(
@@ -152,6 +149,20 @@ public class RoomActivity extends AppCompatActivity {
             myThread.setValue("", new JSONArray(), null, false);
             finish();
         }
+
+        SimpleDateFormat mFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        long mNow = System.currentTimeMillis();
+        Date mDate = new Date(mNow);
+        String starttime = mFormat.format(mDate);
+
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                String roomid = server_userid!=null ? server_userid:user_id;
+                showExitDialog(roomid, starttime);
+            }
+        };
+        getOnBackPressedDispatcher().addCallback(this, callback);
     }
     @RequiresApi(api = Build.VERSION_CODES.N)
     class myThread extends Thread{
@@ -247,14 +258,14 @@ public class RoomActivity extends AppCompatActivity {
         TextView usernameTx = new TextView(this);
         usernameTx.setText(username);
         usernameTx.setTextSize(20);
-        usernameTx.setTextColor(Color.parseColor("#FFFFFF"));
+        usernameTx.setTextColor(Color.parseColor("#000000"));
         params3.setMargins(20,0,0,0);
         usernameTx.setLayoutParams(params3);
 
         TextView idk = new TextView(this);
         idk.setText(idk1);
         idk.setTextSize(20);
-        idk.setTextColor(Color.parseColor("#FFFFFF"));
+        idk.setTextColor(Color.parseColor("#000000"));
         params3.setMargins(20,0,0,0);
         idk.setLayoutParams(params3);
 
@@ -277,7 +288,7 @@ public class RoomActivity extends AppCompatActivity {
 
 
         TextView mic = new TextView(this);
-        mic.setTextColor(Color.parseColor("#FFFFFF"));
+        mic.setTextColor(Color.parseColor("#000000"));
         mic.setText("MIC");
         mic.setTextSize(20);
         mic.setLayoutParams(params3);
@@ -304,14 +315,36 @@ public class RoomActivity extends AppCompatActivity {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    private void showExitDialog() {
+    private void showExitDialog(String roomid, String starttime) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+
         builder.setMessage("방을 나가시겠습니까? 방장이 방을 나갈시 방이 삭제됩니다.")
                 .setPositiveButton("예", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         RequestThread requestThread = new RequestThread(getApplicationContext(), "POST", "delete", "");
                         requestThread.start();
                         myThread.setValue("", null, null, false);
+
+                        DatabaseHelper userDB = new DatabaseHelper(getApplicationContext());
+                        SimpleDateFormat mFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+                        long mNow = System.currentTimeMillis();
+                        Date mDate = new Date(mNow);
+                        String endtime = mFormat.format(mDate);
+
+                        System.out.println("room id : "+roomid);
+                        System.out.println("start time : "+starttime);
+                        System.out.println("end time : "+endtime);
+                        try {
+                            if (userDB.statsgetData(roomid).getCount() == 0) {
+                                userDB.statsinsertData(roomid, starttime, endtime);
+                            }
+                            else{
+                                userDB.statsupdateData(roomid, starttime, endtime);
+                            }
+                        } catch (ParseException e) {
+                            throw new RuntimeException(e);
+                        }
                         finish();
                     }
                 })
