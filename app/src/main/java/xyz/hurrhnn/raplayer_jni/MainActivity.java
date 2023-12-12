@@ -47,11 +47,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_main);
         ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         LinearLayout linearLayout = binding.lroot;
-
 
         RequestThread pushprofile = new RequestThread(getApplicationContext(), "GET", "profile", "");
         pushprofile.start();
@@ -147,8 +145,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(android.view.Menu menu) {
         menu.add(0, 1, 0, "Create Room");
-        menu.add(0, 2, 0, "Stats");
-        menu.add(0, 3, 0, "Profile");
+        menu.add(0, 2, 0, "Profile");
+        menu.add(0, 3, 0, "Stats");
         menu.add(0, 4, 0, "refresh");
         return super.onCreateOptionsMenu(menu);
     }
@@ -238,12 +236,12 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent1);
                 return true;
             case 2:
-                Intent intent2 = new Intent(this, StatsActivity.class);
-                startActivity(intent2);
-                return true;
-            case 3:
                 Intent intent3 = new Intent(this, ProfileActivity.class);
                 startActivity(intent3);
+                return true;
+            case 3:
+                Intent intent2 = new Intent(this, StatsActivity.class);
+                startActivity(intent2);
                 return true;
             case 4:
                 Intent intent = getIntent();
