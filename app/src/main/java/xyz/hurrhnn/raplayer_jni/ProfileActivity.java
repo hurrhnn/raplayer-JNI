@@ -51,7 +51,8 @@ public class ProfileActivity extends AppCompatActivity {
         if (res.getCount() != 0) {
             while(res.moveToNext()){
                 profilebinding.username.setText(res.getString(1));
-                profilebinding.password.setText(res.getString(2));
+//                profilebinding.password.setText(res.getString(2));
+                profilebinding.password.setText("");
                 profilebinding.introduction.setText(res.getString(3));
                 System.out.println(res.getString(4));
                 Glide.with(getApplicationContext())
@@ -73,6 +74,7 @@ public class ProfileActivity extends AppCompatActivity {
                     String introduction = profilebinding.introduction.getText().toString();
                     Bitmap profileBitmap = ((BitmapDrawable) profilebinding.profileImageView.getDrawable()).getBitmap();
                     String base64Image = ImageUtil.bitmapToBase64(profileBitmap);
+//                    System.out.println(base64Image);
 
 
                     JSONObject jsonObject = new JSONObject();
@@ -84,9 +86,15 @@ public class ProfileActivity extends AppCompatActivity {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-
                     RequestThread requestThread = new RequestThread(getApplicationContext(), "POST", "profile", jsonObject.toString());
                     requestThread.start();
+                    requestThread.join();
+                    if (requestThread.getResult() != null) {
+                        JSONObject result = requestThread.getResult();
+                        System.out.println(result.get("msg").toString());
+                    } else {
+                        System.out.println("asdfkjaskdjfaksjdfldskj");
+                    }
                     if (res.getCount() == 0) {
                         userDB.userinsertData(userid, username, password,introduction, "https://ursobad.xyz/raplayer/image/"+userid);
                     } else{

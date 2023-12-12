@@ -32,7 +32,6 @@ public class RequestThread extends Thread{
             try {
                 Connection.Response res = httpRequestUtils.GET(context, "https://ursobad.xyz/raplayer/"+URL, new HashMap<>(), (String[]) null);
                 if(res.statusCode() == 200){
-//                    System.out.println(res.body());
                     result = new JSONObject(res.body());
                 } else {
                     JSONObject msg = new JSONObject(res.body());
@@ -47,7 +46,9 @@ public class RequestThread extends Thread{
                 Connection.Response res = httpRequestUtils.POST(context, "https://ursobad.xyz/raplayer/"+URL, new HashMap<>(), data,(String[]) null);
                 if(res.statusCode() == 200){
                     result = new JSONObject(res.body());
+                    System.out.println(res.body());
                 } else {
+                    System.out.println(res.body());
                     JSONObject msg = new JSONObject(res.body());
                     postToastMessage(msg.get("msg").toString());
 //                    throw new HttpStatusException("error!", res.statusCode(), "https://ursobad.xyz/raplayer/"+URL);
