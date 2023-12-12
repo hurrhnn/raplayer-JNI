@@ -80,6 +80,7 @@ public class RoomActivity extends AppCompatActivity {
             try {
                 getRoom.join();
                 JSONArray inroom_user = getRoom.getResult().getJSONArray("inuser");
+                String mic_opt = getRoom.getResult().getString("mic_opt");
                 for(int i=0;i<inroom_user.length();i++){
                     RequestThread getinroom_user = new RequestThread(getApplicationContext(), "GET", "user/"+inroom_user.get(i), "");
                     getinroom_user.start();
@@ -94,7 +95,7 @@ public class RoomActivity extends AppCompatActivity {
                         String username = jsonObject.getString("username");
                         String idk1 = jsonObject.getString("introduction");
                         String img = jsonObject.getString("img");
-                        createlaylout(username, idk1, img, inroomRoot,jsonObject.getString("userid"));
+                        createlaylout(username, idk1, img, inroomRoot,jsonObject.getString("userid"), mic_opt, inroom_user.get(0).toString());
 
                 }
                 myThread.setValue(server_userid, inroom_user, inroomRoot, true);
@@ -115,6 +116,8 @@ public class RoomActivity extends AppCompatActivity {
                             res.getString(3),
                             res.getString(4),
                             inroomRoot,
+                            user_id,
+                            "",
                             user_id
                     );
                 }
@@ -130,6 +133,8 @@ public class RoomActivity extends AppCompatActivity {
                             jsonObject.getString("introduction"),
                             jsonObject.getString("img"),
                             inroomRoot,
+                            user_id,
+                            "",
                             user_id
                     );
                 } catch (InterruptedException e) {
@@ -191,6 +196,8 @@ public class RoomActivity extends AppCompatActivity {
                         JSONObject jsonObject = getinRoomuser.getResult();
                         if (jsonObject != null) {
                             tinroom_user = jsonObject.getJSONArray("inuser");
+                            String mic_opt = jsonObject.getString("mic_opt");
+                            System.out.println("mic_opt : "+mic_opt);
                             if (tinroom_user.length() != cnt) {
                                 cnt = tinroom_user.length();
                                 for (int i = 0; i < tinroom_user.length(); i++) {
@@ -205,7 +212,7 @@ public class RoomActivity extends AppCompatActivity {
                                         String username = jsonObject1.getString("username");
                                         String idk1 = jsonObject1.getString("introduction");
                                         String img = jsonObject1.getString("img");
-                                        createlaylout(username, idk1, img, inroomRoot, jsonObject1.getString("userid"));
+                                        createlaylout(username, idk1, img, inroomRoot, jsonObject1.getString("userid"), mic_opt, tinroom_user.get(0).toString());
                                     }
                                 }
                             }
@@ -231,7 +238,7 @@ public class RoomActivity extends AppCompatActivity {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public void createlaylout(String username, String idk1, String img, LinearLayout inroomRoot, String id){
+    public void createlaylout(String username, String idk1, String img, LinearLayout inroomRoot, String id, String mic_opt, String rootid){
         LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, 0,1);
         params1.bottomMargin=5;
@@ -306,9 +313,19 @@ public class RoomActivity extends AppCompatActivity {
         linearprofile.addView(usernameTx);
         linearprofile.addView(idk);
         linearprofile.addView(view);
-        microot.addView(mic);
-        microot.addView(micsw);
-        linearprofile.addView(microot);
+        if(mic_opt.equals("true")){
+            microot.addView(mic);
+            microot.addView(micsw);
+            linearprofile.addView(microot);
+        } else {
+            if(Objects.equals(rootid, id)){
+                microot.addView(mic);
+                microot.addView(micsw);
+                linearprofile.addView(microot);
+            }
+        }
+
+
         linearroom.addView(imageView);
         linearroom.addView(linearprofile);
         inroomRoot.addView(linearroom);

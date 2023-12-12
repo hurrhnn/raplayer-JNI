@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -56,11 +57,15 @@ public class PopupFragment extends Fragment {
             @RequiresApi(api = Build.VERSION_CODES.N)
             public void onClick(View v) {
                 JSONObject jsonObject = new JSONObject();
+                EditText passwordEd = view.findViewById(R.id.room_password);
+                String password = passwordEd.getText().toString();
+                System.out.println(password);
 
                 try {
                     jsonObject.put("client_ip", "111.111.111.111");
                     jsonObject.put("client_port", 1234);
                     jsonObject.put("server_userid", server_userid);
+                    jsonObject.put("password", password);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
