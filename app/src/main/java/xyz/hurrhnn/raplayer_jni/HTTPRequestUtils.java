@@ -1,8 +1,11 @@
 package xyz.hurrhnn.raplayer_jni;
 
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.provider.Settings;
 
@@ -21,8 +24,10 @@ public class HTTPRequestUtils {
     @RequiresApi(api = Build.VERSION_CODES.N)
     private Map<String, String> initHeadersMap(Context context, Map<String, String> cookies, String[][] headers) {
         Map<String, String> headersMap = new HashMap<>();
-        if (headers[0] == null)
-            Arrays.asList(headers).forEach((ArrayHeader) -> headersMap.put("Authorization", "Basic: " + Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID)));
+        if (headers[0] == null) {
+            SharedPreferences pref = context.getSharedPreferences("jwt", MODE_PRIVATE);
+            Arrays.asList(headers).forEach((ArrayHeader) -> headersMap.put("Authorization", "Basic: " + pref.getString("jwt", "")));
+        }
         else
             Arrays.asList(headers).forEach((ArrayHeader) -> headersMap.put(ArrayHeader[0], ArrayHeader[1]));
         return headersMap;

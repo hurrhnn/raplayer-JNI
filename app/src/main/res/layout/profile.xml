@@ -58,9 +58,9 @@
                 android:id="@+id/selectImageBtn"/>
             <ImageView
                 android:id="@+id/profileImageView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left"/>
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center" />
         </LinearLayout>
         <LinearLayout
             android:layout_height="0dp"
@@ -73,13 +73,14 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Default password"
+                android:text="Password"
                 android:textSize="20dp" />
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Default password"
+                android:hint="Password"
                 android:layout_gravity="center"
+                android:inputType="textPassword"
                 android:id="@+id/password"/>
         </LinearLayout>
         <LinearLayout

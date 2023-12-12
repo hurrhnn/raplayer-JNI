@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".RoomListActivity"
+    android:id="@+id/root">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true"
+        android:scrollbars="none"
+        tools:ignore="MissingConstraints">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:id="@+id/lroot">
+            <!--        <LinearLayout-->
+            <!--            android:layout_width="match_parent"-->
+            <!--            android:layout_height="0dp"-->
+            <!--            android:layout_weight="1"-->
+            <!--            android:orientation="vertical"-->
+            <!--            android:layout_marginBottom="5dp">-->
+            <!--            <TextView-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="0dp"-->
+            <!--                android:layout_weight="1"-->
+            <!--                android:textSize="20dp"-->
+            <!--                android:text="1930123"/>-->
+            <!--            <TextView-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="0dp"-->
+            <!--                android:layout_weight="1"-->
+            <!--                android:textSize="20dp"-->
+            <!--                android:text="1/8"-->
+            <!--                android:layout_marginRight="5dp"-->
+            <!--                android:layout_gravity="right"/>-->
+            <!--        </LinearLayout>-->
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!--    <LinearLayout-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="match_parent"-->
+    <!--        android:orientation="vertical">-->
+
+    <!--        <TextView-->
+    <!--            android:layout_weight="0.3"-->
+    <!--            android:id="@+id/main_text"-->
+    <!--            android:layout_width="wrap_content"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_gravity="center"-->
+    <!--            android:gravity="top"-->
+    <!--            android:text="Hello World!" />-->
+
+    <!--        <LinearLayout-->
+    <!--            android:layout_weight="10"-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="0px"-->
+    <!--            android:orientation="vertical">-->
+
+    <!--            <TextView-->
+    <!--                android:layout_width="match_parent"-->
+    <!--                android:layout_height="match_parent"-->
+    <!--                android:id="@+id/logging_text"-->
+    <!--                android:background="@drawable/border_black">-->
+    <!--            </TextView>-->
+    <!--        </LinearLayout>-->
+
+    <!--        <EditText-->
+    <!--            android:layout_weight="1"-->
+    <!--            android:id="@+id/address_edittext"-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="0px"-->
+    <!--            android:inputType="text"-->
+    <!--            android:hint="@string/address"-->
+    <!--            android:text="192.168.0.12"/>-->
+
+    <!--        <EditText-->
+    <!--            android:layout_weight="1"-->
+    <!--            android:id="@+id/port_edittext"-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="0px"-->
+    <!--            android:inputType="text"-->
+    <!--            android:hint="@string/port"-->
+    <!--            android:text="3845"/>-->
+
+    <!--        <Button-->
+    <!--            android:layout_weight="1"-->
+    <!--            android:id="@+id/main_start_button"-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="0px"-->
+    <!--            android:text="달려!!!" />-->
+
+    <!--        <LinearLayout-->
+    <!--            android:layout_weight="1"-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:orientation="vertical"/>-->
+
+    <!--    </LinearLayout>-->
+
+</androidx.constraintlayout.widget.ConstraintLayout>
