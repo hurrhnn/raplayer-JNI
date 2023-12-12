@@ -51,7 +51,7 @@ public class ProfileActivity extends AppCompatActivity {
         if (res.getCount() != 0) {
             while(res.moveToNext()){
                 profilebinding.username.setText(res.getString(1));
-                profilebinding.password.setText(res.getString(2));
+                profilebinding.password.setText("");
                 profilebinding.introduction.setText(res.getString(3));
                 System.out.println(res.getString(4));
                 Glide.with(getApplicationContext())
