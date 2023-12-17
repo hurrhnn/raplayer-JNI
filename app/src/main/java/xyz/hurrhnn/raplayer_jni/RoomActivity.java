@@ -91,11 +91,12 @@ public class RoomActivity extends AppCompatActivity {
                         endflag = true;
                         break;
                     }
-                        JSONObject jsonObject = getinroom_user.getResult().getJSONObject("data");
-                        String username = jsonObject.getString("username");
-                        String idk1 = jsonObject.getString("introduction");
-                        String img = jsonObject.getString("img");
-                        createlaylout(username, idk1, img, inroomRoot,jsonObject.getString("userid"), mic_opt, inroom_user.get(0).toString());
+                    JSONObject jsonObject = getinroom_user.getResult().getJSONObject("data");
+                    String username = jsonObject.getString("username");
+                    String idk1 = jsonObject.getString("introduction");
+                    String img = jsonObject.getString("img");
+                    System.out.println(img);
+                    createlaylout(username, idk1, img, inroomRoot,jsonObject.getString("userid"), mic_opt, inroom_user.get(0).toString());
 
                 }
                 myThread.setValue(server_userid, inroom_user, inroomRoot, true);

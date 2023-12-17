@@ -43,7 +43,7 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         ProfileBinding profilebinding = ProfileBinding.inflate(getLayoutInflater());
         setContentView(profilebinding.getRoot());
-        profilebinding.profileImageView.setImageResource(R.drawable.profile_default);
+//        profilebinding.profileImageView.setImageResource(R.drawable.ic_launcher_background);
         DatabaseHelper userDB = new DatabaseHelper(this);
         String userid = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
 
@@ -71,8 +71,12 @@ public class ProfileActivity extends AppCompatActivity {
                     String username = profilebinding.username.getText().toString();
                     String password = profilebinding.password.getText().toString();
                     String introduction = profilebinding.introduction.getText().toString();
-                    Bitmap profileBitmap = ((BitmapDrawable) profilebinding.profileImageView.getDrawable()).getBitmap();
-                    String base64Image = ImageUtil.bitmapToBase64(profileBitmap);
+                    String base64Image = "";
+                    if(profilebinding.profileImageView.getDrawable() !=null){
+                        Bitmap profileBitmap = ((BitmapDrawable) profilebinding.profileImageView.getDrawable()).getBitmap();
+                        base64Image = ImageUtil.bitmapToBase64(profileBitmap);
+                    }
+                    String imageUrl = base64Image.equals("") ? base64Image : "https://ursobad.xyz/raplayer/image/" + userid;
 
 
                     JSONObject jsonObject = new JSONObject();
@@ -88,9 +92,9 @@ public class ProfileActivity extends AppCompatActivity {
                     RequestThread requestThread = new RequestThread(getApplicationContext(), "POST", "profile", jsonObject.toString());
                     requestThread.start();
                     if (res.getCount() == 0) {
-                        userDB.userinsertData(userid, username, password,introduction, "https://ursobad.xyz/raplayer/image/"+userid);
+                        userDB.userinsertData(userid, username, password,introduction, imageUrl);
                     } else{
-                        userDB.userupdateData(userid, username, password, introduction, "https://ursobad.xyz/raplayer/image/"+userid);
+                        userDB.userupdateData(userid, username, password, introduction, imageUrl);
                     }
                     finish();
 
