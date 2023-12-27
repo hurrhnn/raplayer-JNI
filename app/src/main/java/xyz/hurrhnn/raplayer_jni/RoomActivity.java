@@ -195,7 +195,6 @@ public class RoomActivity extends AppCompatActivity {
                         if (jsonObject != null) {
                             tinroom_user = jsonObject.getJSONArray("inuser");
                             String mic_opt = jsonObject.getString("mic_opt");
-                            System.out.println("mic_opt : "+mic_opt);
                             if (tinroom_user.length() != cnt) {
                                 cnt = tinroom_user.length();
                                 for (int i = 0; i < tinroom_user.length(); i++) {
