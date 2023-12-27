@@ -51,8 +51,6 @@ public class RoomActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.N)
     myThread myThread = new myThread();
 
-
-
     @Override
     @RequiresApi(api = Build.VERSION_CODES.N)
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -72,7 +70,6 @@ public class RoomActivity extends AppCompatActivity {
         title.setText(String.format(title.getText().toString(), message));
         LinearLayout inroomRoot = roombinding.inroomRoot;
         boolean endflag = false;
-
 
         if(Objects.equals(event, "join")) {
             RequestThread getRoom = new RequestThread(getApplicationContext(), "GET", "room/"+server_userid, "");
@@ -335,8 +332,6 @@ public class RoomActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void showExitDialog(String roomid, String starttime) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-
         builder.setMessage("방을 나가시겠습니까? 방장이 방을 나갈시 방이 삭제됩니다.")
                 .setPositiveButton("예", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {

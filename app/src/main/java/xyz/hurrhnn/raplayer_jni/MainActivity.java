@@ -1,6 +1,5 @@
 package xyz.hurrhnn.raplayer_jni;
 
-
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -19,11 +18,6 @@ import org.json.JSONObject;
 import xyz.hurrhnn.raplayer_jni.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
-
-    static {
-        System.loadLibrary("raplayer");
-        System.loadLibrary("raplayer_jni");
-    }
 
     private void bufferCallback(byte[] frame, AudioTrack audioTrack) {
         audioTrack.write(frame, 0, frame.length);

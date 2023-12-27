@@ -9,7 +9,6 @@ public class HTTPRequestHandler {
 
     public static class Connect extends HTTPRequestHandler {
         protected final int maxAttempt = 5;
-
         Connection connection;
         private int currentAttempt = 0;
 

@@ -33,11 +33,6 @@ import java.io.IOException;
 import xyz.hurrhnn.raplayer_jni.databinding.ProfileBinding;
 
 public class ProfileActivity extends AppCompatActivity {
-    static {
-        System.loadLibrary("raplayer");
-        System.loadLibrary("raplayer_jni");
-    }
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

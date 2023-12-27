@@ -12,7 +12,6 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import org.jsoup.Connection;
-import org.jsoup.HttpStatusException;
 
 import java.io.FileOutputStream;
 import java.util.HashMap;

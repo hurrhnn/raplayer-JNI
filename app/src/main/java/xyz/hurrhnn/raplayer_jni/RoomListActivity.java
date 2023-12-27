@@ -25,15 +25,6 @@ import xyz.hurrhnn.raplayer_jni.databinding.RoomlistBinding;
 
 public class RoomListActivity extends AppCompatActivity {
 
-    static {
-        System.loadLibrary("raplayer");
-        System.loadLibrary("raplayer_jni");
-    }
-
-    private void bufferCallback(byte[] frame, AudioTrack audioTrack) {
-        audioTrack.write(frame, 0, frame.length);
-    }
-
     @SuppressLint("SetTextI18n")
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -45,7 +36,6 @@ public class RoomListActivity extends AppCompatActivity {
 
         class getroomThread extends Thread{
             private JSONArray roomlist;
-
             public void setValue(JSONArray roomlist){
                 this.roomlist = roomlist;
             }
@@ -241,9 +231,4 @@ public class RoomListActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
-
-    public native String stringFromJNI();
-
-    public native boolean startClientFromJNI(String address, int port, AudioTrack audio);
 }
