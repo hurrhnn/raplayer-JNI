@@ -48,6 +48,8 @@ public class RequestThread extends Thread{
 //                    System.out.println(res.body());
                     result = new JSONObject(res.body());
                 } else {
+                    System.out.println(res.body());
+                    System.out.println("URL: " + server_url+URL);
                     JSONObject msg = new JSONObject(res.body());
                     postToastMessage(msg.get("msg").toString());
 //                    throw new HttpStatusException("error!", res.statusCode(), server_url+URL);

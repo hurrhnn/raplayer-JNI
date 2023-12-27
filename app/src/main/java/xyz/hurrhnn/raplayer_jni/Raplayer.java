@@ -35,6 +35,7 @@ public class Raplayer {
         return spawnRaplayerFromJNI(this.raplayer_ctx, mode, address, port);
     }
 
+
     @RequiresPermission(value = "android.permission.RECORD_AUDIO")
     public long registerMediaProvider(long spawn_id) {
         AudioRecord audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC, 48000, AudioFormat.CHANNEL_IN_STEREO,AudioFormat.ENCODING_PCM_16BIT, 960 * 2 * 2);
@@ -56,6 +57,8 @@ public class Raplayer {
     public native String stringFromJNI();
 
     public native long initRaplayerFromJNI();
+
+//    public native int sendRawRaplayerFromJNI(long raplayer_ctx, long spawn_id, byte[] bytes);
 
     public native long spawnRaplayerFromJNI(long raplayer_ctx, boolean mode, String address, short port);
 

@@ -80,7 +80,7 @@ public class PopupFragment extends Fragment {
                     long spawn_id = raplayer.spawn(true, joinroom.getResult().getJSONObject("data").getString("server_ip"), (short) joinroom.getResult().getJSONObject("data").getInt("server_port"));
                     long provider = raplayer.registerMediaProvider(spawn_id);
                     long consumer = raplayer.registerMediaConsumer(spawn_id);
-
+                    System.out.println(joinroom.getResult().getJSONObject("data").getString("server_ip") + ", " + joinroom.getResult().getJSONObject("data").getInt("server_port"));
                     Log.e("Join Room", ("id: " + spawn_id + ", provider: " + provider + ", consumer: " + consumer));
                 } catch (InterruptedException e) {
                     e.printStackTrace();

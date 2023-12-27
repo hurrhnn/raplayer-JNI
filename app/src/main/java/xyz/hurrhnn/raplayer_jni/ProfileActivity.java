@@ -28,6 +28,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import org.json.JSONObject;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 
 import xyz.hurrhnn.raplayer_jni.databinding.ProfileBinding;
@@ -71,8 +72,19 @@ public class ProfileActivity extends AppCompatActivity {
                         Bitmap profileBitmap = ((BitmapDrawable) profilebinding.profileImageView.getDrawable()).getBitmap();
                         base64Image = ImageUtil.bitmapToBase64(profileBitmap);
                     }
-                    String imageUrl = base64Image.equals("") ? base64Image : "https://ursobad.xyz/raplayer/image/" + userid;
 
+                    FileInputStream inFs = null;
+                    String server_url;
+                    try {
+                        inFs = getApplicationContext().openFileInput("server.txt");
+                        byte[] txt = new byte[500];
+                        inFs.read(txt);
+                        inFs.close();
+                        server_url = new String(txt).trim();
+                    } catch (Exception e) {
+                        server_url = "https://ursobad.xyz/raplayer/";
+                    }
+                    String imageUrl = base64Image.equals("") ? base64Image : server_url+"image/" + userid;
 
                     JSONObject jsonObject = new JSONObject();
                     try {
