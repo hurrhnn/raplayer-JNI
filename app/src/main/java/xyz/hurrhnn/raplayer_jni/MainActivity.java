@@ -1,82 +1,83 @@
 package xyz.hurrhnn.raplayer_jni;
 
-import android.graphics.Color;
-import android.media.AudioFormat;
-import android.media.AudioManager;
+import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.AudioTrack;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.util.Formatter;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import xyz.hurrhnn.raplayer_jni.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
-
-    static {
-        System.loadLibrary("raplayer");
-        System.loadLibrary("raplayer_jni");
-    }
 
     private void bufferCallback(byte[] frame, AudioTrack audioTrack) {
         audioTrack.write(frame, 0, frame.length);
     }
 
+    SharedPreferences pref;
+    SharedPreferences.Editor editor;
+
+    @SuppressLint("SetTextI18n")
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        TextView textView = findViewById(R.id.main_text);
-        TextView logView = findViewById(R.id.logging_text);
-        logView.setTextColor(Color.WHITE);
-
-        EditText addressEditText = findViewById(R.id.address_edittext);
-        EditText portEditText = findViewById(R.id.port_edittext);
-        Button startButton = findViewById(R.id.main_start_button);
-
-        textView.setText(stringFromJNI());
-        startButton.setOnClickListener(new View.OnClickListener() {
-            int count = 0;
-
+        ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        binding.submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AudioTrack audio = new AudioTrack(AudioManager.STREAM_MUSIC, 48000, //sample rate
-                    AudioFormat.CHANNEL_OUT_STEREO, // 2 channel
-                    AudioFormat.ENCODING_PCM_16BIT, // 16-bit
-                    960 * 2 * 2, AudioTrack.MODE_STREAM);
-
-                audio.play();
-
-                String address = addressEditText.getText().toString();
-                String port = portEditText.getText().toString();
-
-                String text = logView.getText().toString() + " [" + new Formatter().format("%02d", ++count).toString() + "] Connecting to " + address + ":" + port + "...\n";
-                logView.setText(text);
-
-                class ClientThread extends Thread {
-                    private final String address;
-                    private final int port;
-
-                    public ClientThread(String address, int port) {
-                        this.address = address;
-                        this.port = port;
-                    }
-
-                    public void run() {
-                        startClientFromJNI(address, port, audio);
-                    }
+                System.out.println(binding.loginPw.getText().toString());
+                JSONObject jsonObject = new JSONObject();
+                try {
+                    jsonObject.put("userid", Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
+                    jsonObject.put("password", binding.loginPw.getText().toString());
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
                 }
-                ClientThread clientThread = new ClientThread(address, Integer.parseInt(port));
-                clientThread.start();
+                RequestThread login = new RequestThread(getApplicationContext(), "POST", "login", jsonObject.toString());
+                login.start();
+                try {
+                    login.join();
+                    if (login.getResult() != null){
+                        System.out.println(login.getResult().getString("msg"));
+                        pref = getApplicationContext().getSharedPreferences("jwt", MODE_PRIVATE);
+                        editor = pref.edit();
+                        editor.putString("jwt", login.getResult().getString("msg"));
+                        editor.commit();
+                        Intent intent = new Intent(getApplicationContext(), RoomListActivity.class);
+                        startActivity(intent);
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+        binding.setpw.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), SetPasswordActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        binding.serverChange.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), ChangeServerActivity.class);
+                startActivity(intent);
             }
         });
     }
-
-    public native String stringFromJNI();
-
-    public native boolean startClientFromJNI(String address, int port, AudioTrack audio);
 }

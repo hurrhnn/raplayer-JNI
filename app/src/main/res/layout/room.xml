@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".RoomActivity"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="%s Room"
+        android:textSize="20dp"
+        android:id="@+id/room_title"
+        android:layout_gravity="center"
+        android:layout_marginBottom="20dp"
+        android:layout_marginTop="10dp"
+        android:textColor="@color/black"/>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/inroom_root">
+
+
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="0dp"-->
+<!--                android:layout_weight="1"-->
+<!--                android:layout_marginBottom="5dp"-->
+<!--                android:background="#979AB1">-->
+<!--                <ImageView-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:id="@+id/user_profile_image"-->
+<!--                    android:src="@drawable/ic_launcher_background"-->
+<!--                    android:layout_marginTop="5dp"-->
+<!--                    android:layout_marginLeft="10dp"-->
+<!--                    android:layout_marginBottom="5dp"-->
+<!--                    />-->
+<!--                <LinearLayout-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:orientation="vertical">-->
+<!--                    <TextView-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:textSize="20dp"-->
+<!--                        android:text="username"-->
+<!--                        android:layout_marginLeft="10dp"-->
+<!--                        />-->
+<!--                    <TextView-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:textSize="20dp"-->
+<!--                        android:text="i don't know.."-->
+<!--                        android:layout_marginLeft="10dp"-->
+<!--                        />-->
+<!--                    <View-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="2px"-->
+<!--                        android:background="@android:color/background_dark"/>-->
+<!--                    <LinearLayout-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:gravity="center">-->
+<!--                        <TextView-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:textSize="20dp"-->
+<!--                            android:text="MIC"-->
+<!--                            android:layout_marginLeft="10dp"-->
+<!--                            android:layout_marginTop="10dp"/>-->
+<!--                        <Switch-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:id="@+id/mic_switch"-->
+<!--                            android:layout_marginLeft="10dp"-->
+<!--                            android:layout_marginTop="10dp"-->
+<!--                            />-->
+<!--                    </LinearLayout>-->
+
+<!--                </LinearLayout>-->
+<!--            </LinearLayout>-->
+
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
