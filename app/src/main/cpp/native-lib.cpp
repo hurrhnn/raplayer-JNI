@@ -49,8 +49,6 @@ void consume_frame_callback(void *frame, int frame_size, void *user_args) {
             return;
         }
     }
-
-    frame_size *= (2 * 2); // 2 channels * 16 bit
     jbyteArray jFrame = (*env).NewByteArray(frame_size);
     (*env).SetByteArrayRegion(jFrame, 0, frame_size, static_cast<const jbyte *>(frame));
 
