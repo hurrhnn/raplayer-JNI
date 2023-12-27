@@ -3,6 +3,7 @@ from functools import wraps
 from base64 import b64decode
 import re
 import jwt
+import os
 
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 200 * 1024 * 1024
@@ -237,7 +238,7 @@ def profile():
                 if data['img'] != "":
                     with open(f'user_image/{userid}.png', 'wb') as f:
                         f.write(b64decode(data['img']))
-                    i['img'] = f'https://raplayer.icmp.kr/image/{userid}'
+                    i['img'] = f'{server_domain}image/{userid}'
                 else:
                     i['img'] = ""
                 print(i)
@@ -318,4 +319,16 @@ def user_l():
     return {'data':user_list}
 
 if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0', port=3333)  
+    try:
+        os.mkdir('user_image')
+    except:
+        pass
+
+    server_domain = input(" input server url >> ")
+    if not server_domain.startswith('http://') or not server_domain.startswith('https://'):
+        server_domain = 'http://' + server_domain
+    if not server_domain.endswith('/'):
+        server_domain += '/'
+    print(server_domain)
+
+    app.run(debug=False, host='0.0.0.0', port=3333)  
