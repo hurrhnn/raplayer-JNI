@@ -16,4 +16,7 @@ python-server
 server.py의 의존성 pyjwt를 pip에서 설치하여 주세요.
 ```
 
-해당 앱(프로젝트)은 python-server 디렉토리 안 server.py, nat_sock.py 서버와 통신합니다. 서버 프로그램 환경을 구축 해 주세요.
+## 주의 사항
+해당 앱(프로젝트)은 python-server 디렉토리 안 server.py, nat_sock.py 서버와 통신합니다. 서버 프로그램 환경을 구축 해 주세요.<br>
+에뮬레이터 환경에서는 앱이 정상적으로 작동하지 않습니다. 실 기기 환경에서 테스트 해주세요.
+
